@@ -6,11 +6,38 @@
 
 %Question 1:
 
+concatinate([], L2, L2).
+concatinate([H | T], L2, [H | R]) :-
+	concatinate(T, L2, R).
+
+addToBeg(L, E, R):-
+	concatinate([E], L, R).
+
+
+list_orders(CustUserName, OrdersList) :-
+	get_orders(CustUserName, 1, [], OrdersList),!.
+
+get_orders(CustUserName, OrderID, Orders, OrdersList) :-
+	customer(CustomerID, CustUserName),
+    order(CustomerID, OrderID, Items),
+    NextOrderID is OrderID + 1,
+	addToBeg(Orders, order(CustomerID, OrderID, Items), NewOrdersList),
+    get_orders(CustUserName, NextOrderID, NewOrdersList, OrdersList).
+
+get_orders(_, _, Orders, Orders).
+
 %end 1
 
 %Question 2:
 
+lengthOfList([], 0).
+lengthOfList([H|T], R):-
+    lengthOfList(T, R1),
+    R is 1 + R1.
 
+countOrdersOfCustomer(CustUserName, Count):-
+    list_orders(CustUserName, OrdersList),
+    lengthOfList(OrdersList, Count).
 
 %end 2
 
@@ -38,6 +65,13 @@ getNumOfItems(Cname, Oid, Count):-
 %end 5
 
 %Question 6:
+
+isBoycott(CompanyName) :-
+    boycott_company(CompanyName, _), !.
+
+isBoycott(ItemName) :-
+    item(ItemName, CompanyName, _),
+    isBoycott(CompanyName).
 
 %end 6
 
