@@ -44,7 +44,9 @@ countOrdersOfCustomer(CustUserName, Count):-
 
 %Question 3:
 
-
+getItemsInOrderById(CustUserName, OrderID, Items) :-
+	customer(CustID, CustUserName),
+	order(CustID, OrderID, Items), !.
 
 %end 3
 
@@ -60,7 +62,16 @@ getNumOfItems(Cname, Oid, Count):-
 
 %Question 5:
 
+calcPriceOfOrder(CustomerName, OrderID, TotalPrice) :-
+    customer(CustomerID, CustomerName),
+    order(CustomerID, OrderID, Items),
+    calcPrice(Items, TotalPrice).
 
+calcPrice([], 0).
+calcPrice([H|T], TotalPrice) :-
+    item(H, _, Price),
+    calcPrice(T, NewPrice),
+    TotalPrice is Price + NewPrice.
 
 %end 5
 
@@ -112,7 +123,11 @@ removeBoycottItemsFromAnOrder(Cname,Oid,NewList):-
 
 %Question 11:
 
-
+getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, AlternativeItem, DiffPrice) :-
+    alternative(ItemName, AlternativeItem),
+    item(ItemName, _, ItemPrice),
+    item(AlternativeItem, _, AlternativeItemPrice),
+    DiffPrice is ItemPrice - AlternativeItemPrice.
 
 %end 11
 
