@@ -88,7 +88,12 @@ isBoycott(ItemName) :-
 
 %Question 7:
 
+whyToBoycott(CompanyName, Justification):-
+    boycott_company(CompanyName, Justification), !.
 
+whyToBoycott(ItemName, Justification):-
+    item(ItemName, CompanyName, _),
+    boycott_company(CompanyName, Justification).
 
 %end 7
 
@@ -112,15 +117,36 @@ removeBoycottItemsFromAnOrder(Cname,Oid,NewList):-
 
 %Question 9:
 
+replace([], []).
+replace([Item|RemainingItems], [H|T]):-
+    isBoycott(Item),
+    alternative(Item, AlternativeItem),
+    H = AlternativeItem,
+    replace(RemainingItems, T).
+
+replace([Item|RemainingItems], [Item|T]):-
+    replace(RemainingItems, T).
+
+replaceBoycottItemsFromAnOrder(CustUserName, OID, NewList):-
+    customer(CID,CustUserName),
+    order(CID, OID, Items),
+    replace(Items, NewList), !.
 
 %end 9
 
 %Question 10:
 
+calcTotalPrice([], 0).
+calcTotalPrice([Item|RemainingItems], Total):-
+    item(Item, _, ItemPrice),
+    calcTotalPrice(RemainingItems, SubTotal),
+    Total is ItemPrice + SubTotal.
 
+calcPriceAfterReplacingBoycottItemsFromAnOrder(CustUserName, OID, NewList, TotalPrice):-
+    replaceBoycottItemsFromAnOrder(CustUserName, OID, NewList),
+    calcTotalPrice(NewList, TotalPrice).
 
 %end 10
-
 %Question 11:
 
 getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, AlternativeItem, DiffPrice) :-
